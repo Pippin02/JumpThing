@@ -15,6 +15,8 @@ namespace JumpThing
 
         Texture2D backTex, sheet1, sheet2, whiteBox;
 
+        PlayerSprite player;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -41,6 +43,8 @@ namespace JumpThing
 
             whiteBox = new Texture2D(GraphicsDevice, 1, 1);
             whiteBox.SetData(new[] { Color.White });
+
+            player = new PlayerSprite(sheet1, whiteBox, new Vector2());
         }
 
         protected override void Update(GameTime gameTime)
@@ -62,6 +66,8 @@ namespace JumpThing
                 new Rectangle(0, 0, screenSize.X, screenSize.Y),
                 Color.White
                 );
+
+            player.Draw(_spriteBatch, gameTime);
 
             _spriteBatch.End();
             base.Draw(gameTime);
