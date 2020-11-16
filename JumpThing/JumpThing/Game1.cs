@@ -15,7 +15,9 @@ namespace JumpThing
 
         Texture2D backTex, sheet1, sheet2, whiteBox;
 
+        Vector2 startPos = new Vector2(100, 200);
         PlayerSprite player;
+        List<List<PlatformSprite>> levels = new List<List<PlatformSprite>>();
 
         public Game1()
         {
@@ -44,16 +46,19 @@ namespace JumpThing
             whiteBox = new Texture2D(GraphicsDevice, 1, 1);
             whiteBox.SetData(new[] { Color.White });
 
-            player = new PlayerSprite(sheet1, whiteBox, new Vector2(screenSize.X / 2, 50));
+            player = new PlayerSprite(sheet1, whiteBox, startPos);
+
+            BuildLevels();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            player.Update(gameTime);
-            if (player.spritePos.Y - 150 > screenSize.Y) player.resetPlayer(new Vector2(screenSize.X / 2, 50));
+            player.Update(gameTime, levels[0]);
+
+            if (player.spritePos.Y - 150 > screenSize.Y) player.resetPlayer(startPos);
 
             base.Update(gameTime);
         }
@@ -68,10 +73,20 @@ namespace JumpThing
                 Color.White
                 );
 
+            foreach(PlatformSprite platform in levels[0])
+                platform.Draw(_spriteBatch, gameTime);
+
             player.Draw(_spriteBatch, gameTime);
 
             _spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        void BuildLevels()
+        {
+            levels.Add(new List<PlatformSprite>());
+            levels[0].Add(new PlatformSprite(sheet2, whiteBox, new Vector2(100, 300)));
+            levels[0].Add(new PlatformSprite(sheet2, whiteBox, new Vector2(250, 300)));
         }
     }
 }

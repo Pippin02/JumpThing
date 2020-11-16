@@ -29,12 +29,12 @@ namespace JumpThing
         //
         // Constructor
         //
-        public Sprite(Texture2D newSpritesheet, Texture2D newCollisionTexture, Vector2 newLocation)
+        public Sprite(Texture2D newSpritesheet, Texture2D newCollisionTex, Vector2 newPos)
         {
             // assign the parameters to the member variables:
             spriteSheet = newSpritesheet;
-            collisionTexture = newCollisionTexture;
-            spritePos = newLocation;
+            collisionTexture = newCollisionTex;
+            spritePos = newPos;
 
             // assign some default values, will be overridden by child classes
             isColliding = false;
@@ -109,7 +109,7 @@ namespace JumpThing
         //
         public void setAnim(int newAnim)
         {
-            if (currentAnim != newAnim) // only if the new animation is not already playing
+            if (currentAnim != newAnim && newAnim < anims.Count) // only if the new animation is not already playing
             {
                 // change the animation int, and reset the counters
                 currentAnim = newAnim;
