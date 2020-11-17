@@ -16,19 +16,19 @@ namespace JumpThing
         {
             spriteOrigin = new Vector2(0.5f, 1f);                   //set origin of player sprite
             isColliding = true;                                     //Player can collide
-            drawCollision = false;
+            drawCollision = false;                                  //set whether to draw collision box
 
-            collisionInsetMax = new Vector2(0.25f, 0.3f);
-            collisionInsetMax = new Vector2(0.25f, 0f);
+            collisionInsetMax = new Vector2(0.25f, 0.3f);           //Correction for collision box
+            collisionInsetMax = new Vector2(0.25f, 0f);             //^
 
-            frameTime = 0.3f;
+            frameTime = 0.3f;                                       //How long each frame of animation takes
 
-            anims = new List<List<Rectangle>>();
+            anims = new List<List<Rectangle>>();                    //Define 2D list for all animations
 
             //Idle Anim
-            anims.Add(new List<Rectangle>());
-            anims[0].Add(new Rectangle(0, 0, 48, 48));
-            anims[0].Add(new Rectangle(48, 0, 48, 48));
+            anims.Add(new List<Rectangle>());                       //Add empty animation
+            anims[0].Add(new Rectangle(0, 0, 48, 48));              //Add first frame
+            anims[0].Add(new Rectangle(48, 0, 48, 48));             //Add second frame
 
             //Walk Anim
             anims.Add(new List<Rectangle>());
@@ -45,21 +45,21 @@ namespace JumpThing
             anims.Add(new List<Rectangle>());
             anims[3].Add(new Rectangle(0, 48, 48, 48));
 
-            hasCollided = false;
-            jumping = false;
-            walking = false;
-            falling = true;
-            jumpPressed = false;
+            hasCollided = false;                                    //Player hasn't collided with a surface
+            jumping = false;                                        //Player isn't jumping
+            walking = false;                                        //Player isn't walking
+            falling = true;                                         //Player isn't falling
+            jumpPressed = false;                                    //Jump key hasn't been pressed yet
         }
 
         public void Update(GameTime gameTime, List<PlatformSprite> platforms)
         {
             if((falling || jumping) && spriteVel.Y < 500)
-                spriteVel.Y += 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                spriteVel.Y += 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;      //If player is falling or jumping, increase player's velocity downwards until max is reached
 
-            spritePos += spriteVel;
+            spritePos += spriteVel;                                         //Update player's position based on velocity
 
-            foreach(PlatformSprite platform in platforms)
+            foreach(PlatformSprite platform in platforms)                   //Check for collision on all sides of the player
             {
                 if(checkCollisionBelow(platform))
                 {
@@ -105,20 +105,20 @@ namespace JumpThing
                     falling = true;
                 }
 
-                if (walking) setAnim(1);
-                else if (falling) setAnim(3);
-                else if (jumping) setAnim(2);
-                else setAnim(0);
+                if (walking) setAnim(1);                //If walking is true, set player's anim to walking anim
+                else if (falling) setAnim(3);           //Same for falling
+                else if (jumping) setAnim(2);           //Same for jumping
+                else setAnim(0);                        //If none of these, default to idle animation
             }
         }
-        public void resetPlayer(Vector2 newPos)
+        public void resetPlayer(Vector2 newPos)             //Function to reset player on death (or at any other point)
         {
-            spritePos = newPos;
-            spriteVel = new Vector2();
-            jumping = false;
-            walking = false;
-            falling = true;
-            jumpPressed = false;
+            spritePos = newPos;                         //Set sprite position
+            spriteVel = new Vector2();                  //Set player's velocity to nothing
+            jumping = false;                            //Set not jumping
+            walking = false;                            //Set not walking
+            falling = true;                             //Set not falling
+            jumpPressed = false;                        //Set jump button to not pressed
         }
     }
 }
