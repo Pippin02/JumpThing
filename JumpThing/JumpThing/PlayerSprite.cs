@@ -1,16 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace JumpThing
 {
     class PlayerSprite : Sprite
     {
         bool jumping, walking, falling, jumpPressed, hasCollided;   //is player jumping, walking, falling, has jum,p been pressed, has player sprite collided
-        const float jumpSpeed = 150f, walkSpeed = 100f;             //Constant variables for the player's jump and walk speed
+        const float jumpSpeed = 7f, walkSpeed = 100f;             //Constant variables for the player's jump and walk speed
 
         public PlayerSprite(Texture2D newSpriteSheet, Texture2D newColTex, Vector2 newPos) : base(newSpriteSheet, newColTex, newPos)
         {
@@ -18,7 +16,7 @@ namespace JumpThing
             isColliding = true;                                     //Player can collide
             drawCollision = false;                                  //set whether to draw collision box
 
-            collisionInsetMax = new Vector2(0.25f, 0.3f);           //Correction for collision box
+            collisionInsetMin = new Vector2(0.25f, 0.3f);           //Correction for collision box
             collisionInsetMax = new Vector2(0.25f, 0f);             //^
 
             frameTime = 0.3f;                                       //How long each frame of animation takes
@@ -32,10 +30,10 @@ namespace JumpThing
 
             //Walk Anim
             anims.Add(new List<Rectangle>());
-            anims[1].Add(new Rectangle(48, 0, 48, 48));
             anims[1].Add(new Rectangle(96, 0, 48, 48));
             anims[1].Add(new Rectangle(48, 0, 48, 48));
             anims[1].Add(new Rectangle(144, 0, 48, 48));
+            anims[1].Add(new Rectangle(48, 0, 48, 48));
 
             //Different Anim
             anims.Add(new List<Rectangle>());
@@ -45,7 +43,6 @@ namespace JumpThing
             anims.Add(new List<Rectangle>());
             anims[3].Add(new Rectangle(0, 48, 48, 48));
 
-            hasCollided = false;                                    //Player hasn't collided with a surface
             jumping = false;                                        //Player isn't jumping
             walking = false;                                        //Player isn't walking
             falling = true;                                         //Player isn't falling
@@ -54,12 +51,52 @@ namespace JumpThing
 
         public void Update(GameTime gameTime, List<PlatformSprite> platforms)
         {
-            if((falling || jumping) && spriteVel.Y < 500)
-                spriteVel.Y += 10f * (float)gameTime.ElapsedGameTime.TotalSeconds;      //If player is falling or jumping, increase player's velocity downwards until max is reached
+            KeyboardState keyboardState = Keyboard.GetState();                                          //Get current state of the keyboard
+            GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);                              //Get current state of the controller
 
-            spritePos += spriteVel;                                         //Update player's position based on velocity
+            if(!jumpPressed && !jumping && !falling &&                                                  //If the player can jump
+                (keyboardState.IsKeyDown(Keys.Space) || gamePadState.IsButtonDown(Buttons.A)))
+            {
+                jumpPressed = true;                                                                     //Jump
+                jumping = true;
+                walking = false;
+                falling = false;
+                spriteVel.Y -= jumpSpeed;
+            }
+            else if (jumpPressed && !jumping && !falling && 
+                !(keyboardState.IsKeyDown(Keys.Space) || gamePadState.IsButtonDown(Buttons.A)))
+            {
+                jumpPressed = false;
+            }
 
-            foreach(PlatformSprite platform in platforms)                   //Check for collision on all sides of the player
+            if(keyboardState.IsKeyDown(Keys.A) || keyboardState.IsKeyDown(Keys.Left)
+                || gamePadState.IsButtonDown(Buttons.DPadLeft))
+            {
+                walking = true;
+                spriteVel.X = -walkSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                flipped = true;
+            }
+            else if(keyboardState.IsKeyDown(Keys.D) || keyboardState.IsKeyDown(Keys.Right)
+                || gamePadState.IsButtonDown(Buttons.DPadRight))
+            {
+                walking = true;
+                spriteVel.X = walkSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                flipped = false;
+            }
+            else
+            {
+                walking = false;
+                spriteVel.X = 0;
+            }
+
+            if ((falling || jumping) && spriteVel.Y < 500)
+            spriteVel.Y += 15f * (float)gameTime.ElapsedGameTime.TotalSeconds;      //If player is falling or jumping, increase player's velocity downwards until max is reached
+
+            spritePos += spriteVel;                                                 //Update player's position based on velocity
+
+            bool hasCollided = false;
+
+            foreach(PlatformSprite platform in platforms)                           //Check for collision on all sides of the player
             {
                 if(checkCollisionBelow(platform))
                 {
@@ -85,14 +122,14 @@ namespace JumpThing
                 {
                     hasCollided = true;
                     while (checkCollision(platform))
-                        spritePos.X++;
+                        spritePos.X--;
                     spriteVel.X = 0;
                 }
                 else if (checkCollisionRight(platform))
                 {
                     hasCollided = true;
                     while (checkCollision(platform))
-                        spritePos.X--;
+                        spritePos.X++;
                     spriteVel.X = 0;
                 }
 
@@ -111,7 +148,7 @@ namespace JumpThing
                 else setAnim(0);                        //If none of these, default to idle animation
             }
         }
-        public void resetPlayer(Vector2 newPos)             //Function to reset player on death (or at any other point)
+        public void resetPlayer(Vector2 newPos)         //Function to reset player position
         {
             spritePos = newPos;                         //Set sprite position
             spriteVel = new Vector2();                  //Set player's velocity to nothing
