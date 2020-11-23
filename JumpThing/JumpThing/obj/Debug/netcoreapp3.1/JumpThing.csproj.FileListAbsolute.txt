@@ -24,3 +24,8 @@ D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\obj\Debug\netcoreapp3.1
 D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\obj\Debug\netcoreapp3.1\JumpThing.dll
 D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\obj\Debug\netcoreapp3.1\JumpThing.pdb
 D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\obj\Debug\netcoreapp3.1\JumpThing.genruntimeconfig.cache
+D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\bin\Debug\netcoreapp3.1\Content\Font1.xnb
+D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\bin\Debug\netcoreapp3.1\Content\BigFont.xnb
+D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\bin\Debug\netcoreapp3.1\Content\CoinSound.xnb
+D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\bin\Debug\netcoreapp3.1\Content\DeathSound.xnb
+D:\College\Edinburgh\Games\JumpThing\JumpThing\JumpThing\bin\Debug\netcoreapp3.1\Content\JumpSound.xnb

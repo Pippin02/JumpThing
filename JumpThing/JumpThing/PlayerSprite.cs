@@ -2,13 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
 
 namespace JumpThing
 {
     class PlayerSprite : Sprite
     {
         bool jumping, walking, falling, jumpPressed, hasCollided;   //is player jumping, walking, falling, has jum,p been pressed, has player sprite collided
-        const float jumpSpeed = 7f, walkSpeed = 100f;             //Constant variables for the player's jump and walk speed
+        const float jumpSpeed = 10f, walkSpeed = 150f;              //Constant variables for the player's jump and walk speed
 
         public PlayerSprite(Texture2D newSpriteSheet, Texture2D newColTex, Vector2 newPos) : base(newSpriteSheet, newColTex, newPos)
         {
@@ -17,16 +18,20 @@ namespace JumpThing
             drawCollision = false;                                  //set whether to draw collision box
 
             collisionInsetMin = new Vector2(0.25f, 0.3f);           //Correction for collision box
-            collisionInsetMax = new Vector2(0.25f, 0f);             //^
+            collisionInsetMax = new Vector2(0.25f, 0.04f);          //^
 
-            frameTime = 0.3f;                                       //How long each frame of animation takes
+            frameTime = 0.1f;                                       //How long each frame of animation takes
 
             anims = new List<List<Rectangle>>();                    //Define 2D list for all animations
 
             //Idle Anim
             anims.Add(new List<Rectangle>());                       //Add empty animation
             anims[0].Add(new Rectangle(0, 0, 48, 48));              //Add first frame
+            anims[0].Add(new Rectangle(0, 0, 48, 48));              //Duplicate first frame, to ensure correct sprite speed
+            anims[0].Add(new Rectangle(0, 0, 48, 48));
             anims[0].Add(new Rectangle(48, 0, 48, 48));             //Add second frame
+            anims[0].Add(new Rectangle(48, 0, 48, 48));             //Duplicate second frame, to ensure correct sprite speed
+            anims[0].Add(new Rectangle(48, 0, 48, 48));
 
             //Walk Anim
             anims.Add(new List<Rectangle>());
@@ -49,7 +54,7 @@ namespace JumpThing
             jumpPressed = false;                                    //Jump key hasn't been pressed yet
         }
 
-        public void Update(GameTime gameTime, List<PlatformSprite> platforms)
+        public void Update(GameTime gameTime, List<PlatformSprite> platforms, SoundEffect jumpSound)
         {
             KeyboardState keyboardState = Keyboard.GetState();                                          //Get current state of the keyboard
             GamePadState gamePadState = GamePad.GetState(PlayerIndex.One);                              //Get current state of the controller
@@ -62,6 +67,7 @@ namespace JumpThing
                 walking = false;
                 falling = false;
                 spriteVel.Y -= jumpSpeed;
+                jumpSound.Play();
             }
             else if (jumpPressed && !jumping && !falling && 
                 !(keyboardState.IsKeyDown(Keys.Space) || gamePadState.IsButtonDown(Buttons.A)))
@@ -90,7 +96,7 @@ namespace JumpThing
             }
 
             if ((falling || jumping) && spriteVel.Y < 500)
-            spriteVel.Y += 15f * (float)gameTime.ElapsedGameTime.TotalSeconds;      //If player is falling or jumping, increase player's velocity downwards until max is reached
+                spriteVel.Y += 30f * (float)gameTime.ElapsedGameTime.TotalSeconds;      //If player is falling or jumping, increase player's velocity downwards until max is reached
 
             spritePos += spriteVel;                                                 //Update player's position based on velocity
 
